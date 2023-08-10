@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.nfragiskatos.photogallery.BuildConfig
 import com.nfragiskatos.photogallery.data.PhotoRepository
 import com.nfragiskatos.photogallery.data.remote.FlickrApi
 import com.nfragiskatos.photogallery.databinding.FragmentPhotoGalleryBinding
@@ -32,6 +33,7 @@ class PhotoGalleryFragment : Fragment() {
     ): View {
         _binding = FragmentPhotoGalleryBinding.inflate(inflater, container, false)
         binding.photoGrid.layoutManager = GridLayoutManager(context, 3)
+        Log.d(TAG, "API KEY = ${BuildConfig.flickrApiKey}")
         return binding.root
     }
 
@@ -40,7 +42,7 @@ class PhotoGalleryFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             val response = PhotoRepository().fetchContents()
-            Log.d(TAG, "Response Received: $response")
+//            Log.d(TAG, "Response Received: $response")
         }
     }
 

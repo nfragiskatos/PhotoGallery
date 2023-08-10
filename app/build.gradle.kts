@@ -1,8 +1,13 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
 }
+
+
+val flickrApiKey: String = gradleLocalProperties(rootDir).getProperty("flickrApiKey")
 
 android {
     namespace = "com.nfragiskatos.photogallery"
@@ -25,6 +30,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "flickrApiKey", flickrApiKey)
+        }
+        getByName("debug") {
+            buildConfigField("String", "flickrApiKey", flickrApiKey)
         }
     }
     compileOptions {
@@ -37,6 +46,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
