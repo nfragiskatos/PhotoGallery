@@ -6,15 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.nfragiskatos.photogallery.BuildConfig
 import com.nfragiskatos.photogallery.data.PhotoRepository
-import com.nfragiskatos.photogallery.data.remote.FlickrApi
 import com.nfragiskatos.photogallery.databinding.FragmentPhotoGalleryBinding
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.create
 
 private const val TAG = "PhotoGalleryFragment"
 
@@ -24,6 +25,7 @@ class PhotoGalleryFragment : Fragment() {
         get() = checkNotNull(_binding) {
             "Cannot access binding because iti s null. Is the view visible?"
         }
+    private val viewModel : PhotoGalleryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,8 +42,11 @@ class PhotoGalleryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val response = PhotoRepository().fetchContents()
-            Log.d(TAG, "Response Received: $response")
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                   viewModel.galleryItems.collect {items ->
+                       Log.d(TAG, "Response received: $items")
+                   }
+            }
         }
     }
 
