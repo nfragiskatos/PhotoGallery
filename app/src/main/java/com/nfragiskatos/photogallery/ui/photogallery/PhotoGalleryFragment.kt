@@ -14,7 +14,6 @@ import com.nfragiskatos.photogallery.data.remote.FlickrApi
 import com.nfragiskatos.photogallery.databinding.FragmentPhotoGalleryBinding
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 
 private const val TAG = "PhotoGalleryFragment"
@@ -33,7 +32,7 @@ class PhotoGalleryFragment : Fragment() {
     ): View {
         _binding = FragmentPhotoGalleryBinding.inflate(inflater, container, false)
         binding.photoGrid.layoutManager = GridLayoutManager(context, 3)
-        Log.d(TAG, "API KEY = ${BuildConfig.flickrApiKey}")
+        Log.d(TAG, "API KEY = ${BuildConfig.FLICKR_API_KEY}")
         return binding.root
     }
 
