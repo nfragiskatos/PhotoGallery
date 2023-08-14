@@ -34,7 +34,6 @@ class PhotoGalleryFragment : Fragment() {
     ): View {
         _binding = FragmentPhotoGalleryBinding.inflate(inflater, container, false)
         binding.photoGrid.layoutManager = GridLayoutManager(context, 3)
-        Log.d(TAG, "API KEY = ${BuildConfig.FLICKR_API_KEY}")
         return binding.root
     }
 
@@ -44,7 +43,7 @@ class PhotoGalleryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                    viewModel.galleryItems.collect {items ->
-                       Log.d(TAG, "Response received: $items")
+                       binding.photoGrid.adapter = PhotoListAdapter(items)
                    }
             }
         }
