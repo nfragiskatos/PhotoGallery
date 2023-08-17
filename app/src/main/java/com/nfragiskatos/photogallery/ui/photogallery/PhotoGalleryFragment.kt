@@ -67,17 +67,24 @@ class PhotoGalleryFragment : Fragment() {
 
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d(TAG, "QueryTextSubmit: $query")
                 viewModel.setQuery(query ?: "")
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.d(TAG, "QueryTextChange: $newText")
                 return false
             }
         })
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_clear -> {
+                viewModel.setQuery("")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onDestroyView() {
