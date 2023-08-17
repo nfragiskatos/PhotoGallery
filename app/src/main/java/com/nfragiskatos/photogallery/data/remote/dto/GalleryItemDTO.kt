@@ -8,5 +8,5 @@ data class GalleryItemDTO (
     val title: String,
     val id: String,
     @Json(name = "url_s")
-    val url: String
+    val url: String?
 )
