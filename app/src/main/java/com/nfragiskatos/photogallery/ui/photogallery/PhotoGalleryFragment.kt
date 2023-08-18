@@ -15,10 +15,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.nfragiskatos.photogallery.BuildConfig
 import com.nfragiskatos.photogallery.R
 import com.nfragiskatos.photogallery.data.PhotoRepository
 import com.nfragiskatos.photogallery.databinding.FragmentPhotoGalleryBinding
+import com.nfragiskatos.photogallery.ui.workers.PollWorker
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -37,6 +40,9 @@ class PhotoGalleryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        val workRequest = OneTimeWorkRequest.Builder(PollWorker::class.java).build()
+        WorkManager.getInstance(requireContext()).enqueue(workRequest)
     }
     override fun onCreateView(
         inflater: LayoutInflater,
