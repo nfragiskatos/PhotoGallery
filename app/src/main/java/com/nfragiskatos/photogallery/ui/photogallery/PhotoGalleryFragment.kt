@@ -15,6 +15,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.nfragiskatos.photogallery.BuildConfig
@@ -41,7 +43,14 @@ class PhotoGalleryFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        val workRequest = OneTimeWorkRequest.Builder(PollWorker::class.java).build()
+        val workConstraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .build()
+
+        val workRequest = OneTimeWorkRequest
+            .Builder(PollWorker::class.java)
+            .setConstraints(workConstraints)
+            .build()
         WorkManager.getInstance(requireContext()).enqueue(workRequest)
     }
     override fun onCreateView(
