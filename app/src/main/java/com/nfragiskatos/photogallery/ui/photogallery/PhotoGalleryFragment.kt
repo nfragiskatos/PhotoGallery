@@ -26,6 +26,8 @@ private const val TAG = "PhotoGalleryFragment"
 
 class PhotoGalleryFragment : Fragment() {
     private var _binding : FragmentPhotoGalleryBinding? = null
+    private var searchView : SearchView? = null
+
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because iti s null. Is the view visible?"
@@ -51,8 +53,9 @@ class PhotoGalleryFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                   viewModel.galleryItems.collect {items ->
-                       binding.photoGrid.adapter = PhotoListAdapter(items)
+                   viewModel.uiState.collect {state ->
+                       binding.photoGrid.adapter = PhotoListAdapter(state.images)
+                       searchView?.setQuery(state.query, false)
                    }
             }
         }
@@ -63,7 +66,7 @@ class PhotoGalleryFragment : Fragment() {
         inflater.inflate(R.menu.fragment_photo_gallery, menu)
 
         val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
-        val searchView: SearchView? = searchItem.actionView as? SearchView
+        searchView = searchItem.actionView as? SearchView
 
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -90,5 +93,10 @@ class PhotoGalleryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroyOptionsMenu() {
+        super.onDestroyOptionsMenu()
+        searchView = null
     }
 }
