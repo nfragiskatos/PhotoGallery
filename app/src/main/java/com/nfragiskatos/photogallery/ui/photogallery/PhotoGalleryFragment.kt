@@ -35,7 +35,7 @@ class PhotoGalleryFragment : Fragment() {
 
     private val binding
         get() = checkNotNull(_binding) {
-            "Cannot access binding because iti s null. Is the view visible?"
+            "Cannot access binding because it is null. Is the view visible?"
         }
     private val viewModel : PhotoGalleryViewModel by viewModels()
 
