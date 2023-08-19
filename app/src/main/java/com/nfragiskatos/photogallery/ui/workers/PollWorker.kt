@@ -21,6 +21,9 @@ class PollWorker(
     workParameters: WorkerParameters
 ) : CoroutineWorker(context, workParameters) {
     override suspend fun doWork(): Result {
+
+        Log.i(TAG, "doWork executed")
+
         val preferencesRepository = PreferencesRepository.get()
         val photoRepository = PhotoRepository()
 

@@ -32,6 +32,7 @@ private const val TAG = "PhotoGalleryFragment"
 class PhotoGalleryFragment : Fragment() {
     private var _binding : FragmentPhotoGalleryBinding? = null
     private var searchView : SearchView? = null
+    private var pollingMenuItem: MenuItem ? = null
 
     private val binding
         get() = checkNotNull(_binding) {
@@ -82,6 +83,7 @@ class PhotoGalleryFragment : Fragment() {
 
         val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
         searchView = searchItem.actionView as? SearchView
+        pollingMenuItem = menu.findItem(R.id.menu_item_toggle_polling)
 
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -113,5 +115,6 @@ class PhotoGalleryFragment : Fragment() {
     override fun onDestroyOptionsMenu() {
         super.onDestroyOptionsMenu()
         searchView = null
+        pollingMenuItem = null
     }
 }
