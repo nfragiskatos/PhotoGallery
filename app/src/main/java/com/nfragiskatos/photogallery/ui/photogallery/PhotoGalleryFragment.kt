@@ -1,5 +1,6 @@
 package com.nfragiskatos.photogallery.ui.photogallery
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -64,7 +65,10 @@ class PhotoGalleryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                    viewModel.uiState.collect {state ->
-                       binding.photoGrid.adapter = PhotoListAdapter(state.images)
+                       binding.photoGrid.adapter = PhotoListAdapter(state.images) {uri ->
+                           val intent = Intent(Intent.ACTION_VIEW, uri)
+                           startActivity(intent)
+                       }
                        searchView?.setQuery(state.query, false)
                        updatePollingState(state.isPolling)
                    }
