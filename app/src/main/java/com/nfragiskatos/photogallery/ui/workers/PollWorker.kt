@@ -1,12 +1,19 @@
 package com.nfragiskatos.photogallery.ui.workers
 
+import android.app.PendingIntent
 import android.content.Context
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.nfragiskatos.photogallery.MainActivity
+import com.nfragiskatos.photogallery.NOTIFICATION_CHANNEL_ID
+import com.nfragiskatos.photogallery.R
 import com.nfragiskatos.photogallery.data.PhotoRepository
 import com.nfragiskatos.photogallery.data.PreferencesRepository
 import kotlinx.coroutines.flow.first
+import okhttp3.internal.notify
 
 private const val TAG = "PollWorker"
 class PollWorker(
@@ -34,6 +41,7 @@ class PollWorker(
                 } else {
                     Log.i(TAG, "Got a new result: $newResultId")
                     preferencesRepository.setLastResultId(newResultId)
+                    notifyUser()
                 }
             }
 
@@ -42,5 +50,29 @@ class PollWorker(
             Log.e(TAG, "Background update failed", ex)
             Result.failure()
         }
+    }
+
+    private fun notifyUser() {
+        val intent = MainActivity.newIntent(context)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val resources = context.resources
+
+        val notification = NotificationCompat
+            .Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setTicker(resources.getString(R.string.new_pictures_title))
+            .setSmallIcon(android.R.drawable.ic_menu_report_image)
+            .setContentTitle(resources.getString(R.string.new_pictures_title))
+            .setContentText(resources.getString(R.string.new_pictures_text))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        NotificationManagerCompat.from(context).notify(0, notification)
+
     }
 }
