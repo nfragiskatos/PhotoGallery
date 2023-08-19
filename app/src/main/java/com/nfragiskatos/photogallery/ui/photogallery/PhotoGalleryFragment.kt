@@ -72,9 +72,19 @@ class PhotoGalleryFragment : Fragment() {
                    viewModel.uiState.collect {state ->
                        binding.photoGrid.adapter = PhotoListAdapter(state.images)
                        searchView?.setQuery(state.query, false)
+                       updatePollingState(state.isPolling)
                    }
             }
         }
+    }
+
+    private fun updatePollingState(isPolling: Boolean) {
+        val itemTitle = if (isPolling) {
+            R.string.stop_polling
+        } else {
+            R.string.start_polling
+        }
+        pollingMenuItem?.setTitle(itemTitle)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -101,6 +111,10 @@ class PhotoGalleryFragment : Fragment() {
         return when (item.itemId) {
             R.id.menu_item_clear -> {
                 viewModel.setQuery("")
+                true
+            }
+            R.id.menu_item_toggle_polling -> {
+                viewModel.toggleIsPolling()
                 true
             }
             else -> super.onOptionsItemSelected(item)

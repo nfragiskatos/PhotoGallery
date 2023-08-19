@@ -9,6 +9,7 @@ import com.nfragiskatos.photogallery.data.remote.dto.GalleryItemDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,11 +38,23 @@ class PhotoGalleryViewModel : ViewModel() {
                 }
             }
         }
+
+        viewModelScope.launch {
+            preferencesRepository.isPolling.collect{isPolling ->
+                _uiState.update { it.copy(isPolling = isPolling) }
+            }
+        }
     }
 
     fun setQuery(query: String) {
         viewModelScope.launch {
             preferencesRepository.setStoredQuery(query)
+        }
+    }
+
+    fun toggleIsPolling() {
+        viewModelScope.launch {
+            preferencesRepository.setIsPolling(!uiState.value.isPolling)
         }
     }
 
@@ -56,5 +69,6 @@ class PhotoGalleryViewModel : ViewModel() {
     data class PhotoGalleryUiState (
         val images: List<GalleryItemDTO> =  listOf(),
         val query: String = "",
+        val isPolling: Boolean = false
     )
 }
