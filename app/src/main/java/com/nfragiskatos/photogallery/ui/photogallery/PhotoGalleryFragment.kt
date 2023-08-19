@@ -16,8 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.nfragiskatos.photogallery.BuildConfig
 import com.nfragiskatos.photogallery.R
@@ -26,8 +28,10 @@ import com.nfragiskatos.photogallery.databinding.FragmentPhotoGalleryBinding
 import com.nfragiskatos.photogallery.ui.workers.PollWorker
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "PhotoGalleryFragment"
+private const val POLL_WORK = "POLL_WORK"
 
 class PhotoGalleryFragment : Fragment() {
     private var _binding : FragmentPhotoGalleryBinding? = null
@@ -43,16 +47,6 @@ class PhotoGalleryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.UNMETERED)
-            .build()
-
-        val workRequest = OneTimeWorkRequest
-            .Builder(PollWorker::class.java)
-            .setConstraints(workConstraints)
-            .build()
-        WorkManager.getInstance(requireContext()).enqueue(workRequest)
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,6 +79,22 @@ class PhotoGalleryFragment : Fragment() {
             R.string.start_polling
         }
         pollingMenuItem?.setTitle(itemTitle)
+
+        if (isPolling) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .build()
+            val periodicWorkRequest = PeriodicWorkRequestBuilder<PollWorker>(15, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build()
+            WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+                POLL_WORK,
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicWorkRequest
+            )
+        } else {
+            WorkManager.getInstance(requireContext()).cancelUniqueWork(POLL_WORK)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
