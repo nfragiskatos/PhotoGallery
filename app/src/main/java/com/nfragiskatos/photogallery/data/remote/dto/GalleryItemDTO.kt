@@ -13,7 +13,7 @@ data class GalleryItemDTO (
     val owner: String
 ) {
     val photoPageUri: Uri
-        get() = Uri.parse("https://www.flickr/com/photos/")
+        get() = Uri.parse("https://www.flickr.com/photos/")
             .buildUpon()
             .appendPath(owner)
             .appendPath(id)
